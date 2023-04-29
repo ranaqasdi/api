@@ -1,12 +1,13 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const Product = require("../models/product")
 
 const getAllProducts = async(req, res) => {
-    mongoose.find({});
-    res.status(200);
-    res
+    const Data = await Product.find();
+    res.json(Data);
+
 }
 const getAllProductsTesting = async(req, res) => {
-    res.status(200).js
+    res.status(200).json({})
 }
 
 module.exports = { getAllProducts, getAllProductsTesting }

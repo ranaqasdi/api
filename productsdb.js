@@ -5,7 +5,7 @@ const productModel = require("./models/product")
 const productjson = require("./products.json")
 const start = async() => {
     try {
-        await connectDB(process.env.MONGODB_URL);
+        await connectDB();
         //for local db
         // await connectDB();
         await productModel.create(productjson);
