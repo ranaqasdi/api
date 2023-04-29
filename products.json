@@ -1,0 +1,17 @@
+[{
+        "name": "iphone",
+        "price": 134,
+        "feature": true,
+        "company": "apple"
+    },
+    {
+        "name": "Dell",
+        "price": 1324,
+        "company": "Dell"
+    },
+    {
+        "name": "HP",
+        "price": 14,
+        "company": "HP"
+    }
+]
