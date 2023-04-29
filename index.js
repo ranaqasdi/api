@@ -7,7 +7,8 @@ const filePath = path.join(__dirname, 'files');
 const mongoose = require('mongoose')
 const connectDB = require('./db/connectdb')
 const products_routes = require("./routes/product")
-const Product = require("./models/product")
+const Product = require("./models/product");
+const { randomBytes } = require("crypto");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.all('/', (req, res) => {
@@ -43,7 +44,7 @@ app.get('/', async(req, res) => {
 })
 
 app.post('/home', async(req, res) => {
-    const { name, price, company } = req.body;
+    const { name, price, company, rating } = req.body;
     queryObject = {};
     if (name) {
         queryObject.name = { $regex: name, $options: "i" };
@@ -55,6 +56,10 @@ app.post('/home', async(req, res) => {
     }
     if (company) {
         queryObject.company = { $regex: company, $options: "i" };
+        // queryObject.company = company
+    }
+    if (rating) {
+        queryObject.rating = rating;
         // queryObject.company = company
     }
     const viewData = await Product.find(queryObject);
