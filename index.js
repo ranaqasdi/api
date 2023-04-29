@@ -1,11 +1,15 @@
 require("dotenv").config();
 const express = require('express')
 const app = express();
+const path = require('path');
+
+const filePath = path.join(__dirname, 'files');
 const mongoose = require('mongoose')
 const connectDB = require('./db/connectdb')
 const products_routes = require("./routes/product")
 const Product = require("./models/product")
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 // app.all('/', (req, res) => {
 //     console.log("Just got a request!")
 //     res.send('Yo HOello  am !')
@@ -14,13 +18,46 @@ const Product = require("./models/product")
 
 app.get('/', async(req, res) => {
     try {
-        const viewData = await Product.find();
-        res.json(viewData);
+        const { company, name, rating, price } = req.query;
+        const queryObject = {};
+        if (company) {
+            queryObject.company = company;
+        }
+        if (name) {
+            queryObject.name = { $regex: name, $options: "i" };
+            // queryObject.name = name;
+        }
+        if (rating) {
+            queryObject.rating = rating;
+        }
+        if (price) {
+            queryObject.price = price;
+        }
+
+        const viewData = await Product.find(queryObject);
+        console.log(req.query)
+        res.json({ viewData });
     } catch (error) {
         res.status(500).send(error)
     }
 })
 
+
+app.get('/register', async(req, res) => {
+    res.sendFile(`${filePath}/register.html`)
+})
+app.post('/register', async(req, res) => {
+    const name = req.body.name;
+    const price = req.body.price;
+    const rating = req.body.rating;
+    const company = req.body.company;
+    try {
+        const newPost = await Product.create({ name, price, rating, company });
+        res.send("<h2>User Has Been Added</h2>")
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
 
 
 
