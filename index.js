@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.get('/', async(req, res) => {
     try {
-        const { company, name, rating, price, sort } = req.query;
+        const { company, name, rating, price, sort, page, select } = req.query;
         const queryObject = {};
         if (company) {
             queryObject.company = { $regex: company, $options: "i" };
@@ -39,9 +39,20 @@ app.get('/', async(req, res) => {
         let apiData = Product.find(queryObject);
 
         if (sort) {
-            sortFix = sort.replace(",", " ");
+            sortFix = sort.split(",").join(" ");
             apiData = apiData.sort(sortFix)
         }
+        if (select) {
+            let selectFix = select.split(",").join(" ");
+            apiData = apiData.select(selectFix)
+        }
+        if (page) {
+            let page = Number(req.query.page) || 1;
+            let limit = Number(req.query.limit) || 3;
+            let skip = (page - 1) * limit;
+            apiData = apiData.skip(skip).limit(limit);
+        }
+
         const viewData = await apiData;
         // console.log(req.query)  
 
