@@ -21,7 +21,8 @@ app.get('/', async(req, res) => {
         const { company, name, rating, price } = req.query;
         const queryObject = {};
         if (company) {
-            queryObject.company = company;
+            queryObject.company = { $regex: company, $options: "i" };
+            // queryObject.company = company
         }
         if (name) {
             queryObject.name = { $regex: name, $options: "i" };
