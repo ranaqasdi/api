@@ -34,13 +34,36 @@ app.get('/', async(req, res) => {
         if (price) {
             queryObject.price = price;
         }
-
         const viewData = await Product.find(queryObject);
-        console.log(req.query)
+        // console.log(req.query)
         res.json({ viewData });
     } catch (error) {
         res.status(500).send(error)
     }
+})
+
+app.post('/home', async(req, res) => {
+    const { name, price, company } = req.body;
+    queryObject = {};
+    if (name) {
+        queryObject.name = { $regex: name, $options: "i" };
+        // queryObject.company = company
+    }
+    if (price) {
+        queryObject.price = price;
+        // queryObject.company = company
+    }
+    if (company) {
+        queryObject.company = { $regex: company, $options: "i" };
+        // queryObject.company = company
+    }
+    const viewData = await Product.find(queryObject);
+    console.log(queryObject, name)
+    res.json({ viewData });
+
+})
+app.get('/home', (req, res) => {
+    res.sendFile(`${filePath}/home.html`)
 })
 
 
