@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.get('/', async(req, res) => {
     try {
-        const { company, name, rating, price } = req.query;
+        const { company, name, rating, price, sort } = req.query;
         const queryObject = {};
         if (company) {
             queryObject.company = { $regex: company, $options: "i" };
@@ -35,9 +35,18 @@ app.get('/', async(req, res) => {
         if (price) {
             queryObject.price = price;
         }
-        const viewData = await Product.find(queryObject);
-        // console.log(req.query)
-        res.json({ viewData });
+
+        let apiData = Product.find(queryObject);
+
+        if (sort) {
+            sortFix = sort.replace(",", " ");
+            apiData = apiData.sort(sortFix)
+        }
+        const viewData = await apiData;
+        // console.log(req.query)  
+
+        res.send({ viewData });
+
     } catch (error) {
         res.status(500).send(error)
     }
@@ -66,15 +75,19 @@ app.post('/home', async(req, res) => {
     console.log(queryObject, name)
     res.json({ viewData });
 
-})
+});
+
 app.get('/home', (req, res) => {
+
+
     res.sendFile(`${filePath}/home.html`)
 })
 
 
 app.get('/register', async(req, res) => {
     res.sendFile(`${filePath}/register.html`)
-})
+});
+
 app.post('/register', async(req, res) => {
     const name = req.body.name;
     const price = req.body.price;
@@ -102,5 +115,6 @@ const start = async() => {
 }
 
 
-app.listen(process.env.PORT || 2000)
+app.listen(process.env.PORT || 2000);
+
 start();
